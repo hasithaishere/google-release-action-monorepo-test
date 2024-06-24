@@ -2,7 +2,7 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - 'dev'
+      - 'main'
     paths:
       - 'lambdas/lambda1/**'
 
@@ -49,7 +49,7 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          default-branch: 'dev'
+          default-branch: 'main'
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
