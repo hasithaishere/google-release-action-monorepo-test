@@ -34,10 +34,8 @@ jobs:
         with:
           node-version: 18
           registry-url: 'https://npm.pkg.github.com'
-      - run: lambdas/lambda1 && npm ci --ignore-scripts
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGE_ACCESS_TOKEN }}
-      - run: lambdas/lambda1 && npm audit --omit=dev
+      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
+      - run: cd lambdas/lambda1 && npm audit --omit=dev
 
   create_release:
     if: github.event.pull_request.merged == true
