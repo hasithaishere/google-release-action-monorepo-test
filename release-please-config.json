@@ -1,0 +1,7 @@
+{
+    "packages": {
+        "lambdas/lambda1": {
+            "release-type": "node"
+        }
+    }
+}

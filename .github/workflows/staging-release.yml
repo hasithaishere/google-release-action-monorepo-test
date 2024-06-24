@@ -1,0 +1,88 @@
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'dev'
+    paths:
+      - 'lambdas/lambda1/**'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+  CURRENT_HASH: ${{ github.sha }}
+
+name: Staging Release
+jobs:
+  test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
+      - run: cd lambdas/lambda1 && npm test
+
+  audit:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+      - run: lambdas/lambda1 && npm ci --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GH_PACKAGE_ACCESS_TOKEN }}
+      - run: lambdas/lambda1 && npm audit --omit=dev
+
+  create_release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          default-branch: 'dev'
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  publish_release:
+    if: github.event.pull_request.merged == true && needs.create_release.outputs.release_created == 'true'
+    runs-on: ubuntu-latest
+    needs: create_release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta-secret-rotation
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1
+      - name: Build and push Docker image (Secret Rotation Function)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./lambdas/lambda1
+          file: ./lambdas/lambda1/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:latest
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:${{ env.CURRENT_HASH }}
+          labels: ${{ steps.meta-secret-rotation.outputs.labels }}
+          build-args: |
+            GITHUB_PACKAGE_ACCESS_TOKEN=${{ secrets.GH_PACKAGE_ACCESS_TOKEN }}
