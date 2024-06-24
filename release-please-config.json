@@ -1,8 +1,11 @@
 {
+    "include-component-in-tag": true,
+    "tag-separator": "@",
+    "release-type": "node",
+    "separate-pull-requests": true,
     "packages": {
-        "lambdas/lambda1": {
-            "release-type": "node",
-            "changelog-path": "lambdas/lambda1/CHANGELOG.md"
-        }
+      "./lambdas/lambda1": {
+        "package-name": "lambda1"
+      }
     }
-}
+  }
