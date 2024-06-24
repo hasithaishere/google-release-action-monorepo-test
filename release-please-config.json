@@ -1,7 +1,19 @@
 {
     "packages": {
         "lambdas/lambda1": {
-            "release-type": "node"
+            "release-type": "node",
+            "changelog-path": "lambdas/lambda1/CHANGELOG.md"
         }
+    },
+    "plugins": [
+        {
+            "type": "node-workspace",
+            "workspaces": [
+                "lambdas/*"
+            ]
+        }
+    ],
+    "release-notes": {
+        "repo-url": "https://github.com/hasithaishere/google-release-action-monorepo-test"
     }
 }
