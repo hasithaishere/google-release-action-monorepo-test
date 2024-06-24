@@ -1,19 +1,13 @@
 {
+    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+    "pull-request-title-pattern": "build${scope}: release${component} ${version}",
+    "extra-files": [
+        "README.md"
+    ],
     "packages": {
         "lambdas/lambda1": {
             "release-type": "node",
             "changelog-path": "lambdas/lambda1/CHANGELOG.md"
         }
-    },
-    "plugins": [
-        {
-            "type": "node-workspace",
-            "workspaces": [
-                "lambdas/*"
-            ]
-        }
-    ],
-    "release-notes": {
-        "repo-url": "https://github.com/hasithaishere/google-release-action-monorepo-test"
     }
 }
