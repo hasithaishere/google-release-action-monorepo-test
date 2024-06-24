@@ -1,6 +1,6 @@
 exports.handler = async (event, context) => {
     try {
-        // Your code logic goes here.....
+        // Your code logic goes here.......
 
         return {
             statusCode: 200,
