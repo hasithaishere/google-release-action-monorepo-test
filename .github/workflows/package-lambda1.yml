@@ -19,11 +19,11 @@ jobs:
     name: Extract Version
     steps:
       - uses: actions/checkout@v3
-      - name: Read version from package.json
+      - name: Extract version from package.json
         id: package_version
         run: |
-          JSON_STRING="$(cat lambdas/lambda1/package.json)"
-          echo "::set-output name=version::$(echo '${{ fromJson(JSON_STRING).version }}')"
+          VERSION=$(jq -r '.version' lambdas/lambda1/package.json)
+          echo "::set-output name=version::$VERSION"
       - name: Print version
         run: echo "Extracted version is ${{ steps.package_version.outputs.version }}"
 
