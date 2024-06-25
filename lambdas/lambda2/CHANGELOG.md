@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda2@v0.1.1...lambda2@v0.1.2) (2024-06-25)
+
+
+### Bug Fixes
+
+* Add is_runnable job to release.yml workflow ([b7994c1](https://github.com/hasithaishere/google-release-action-monorepo-test/commit/b7994c1a938da72d397b5dfccaf38b450f9bb862))
+
 ## [0.1.1](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda2@v0.1.0...lambda2@v0.1.1) (2024-06-25)
 
 
