@@ -11,7 +11,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   CURRENT_HASH: ${{ github.sha }}
 
-name: Staging Release
+name: Package - Lambda 1
 jobs:
   extract_version:
     if: github.event.pull_request.merged && startsWith(github.event.pull_request.head.ref, 'release-please--branches--main--components--')
@@ -23,17 +23,11 @@ jobs:
         id: package_version
         run: |
           JSON_STRING="$(cat lambdas/lambda1/package.json)"
-          echo "PACKAGE_JSON<<EOF" >> $GITHUB_ENV
-          echo "$JSON_STRING" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-      - name: Set output from JSON
-        run: echo "::set-output name=version::$(echo '${{ fromJson(env.PACKAGE_JSON).version }}')"
-        id: json
+          echo "::set-output name=version::$(echo '${{ fromJson(JSON_STRING).version }}')"
       - name: Print version
-        run: echo "Extracted version is ${{ steps.json.outputs.version }}"
+        run: echo "Extracted version is ${{ steps.package_version.outputs.version }}"
 
   publish_release:
-    if: github.event.pull_request.merged == true && needs.create_release.outputs.release_created == 'true'
     runs-on: ubuntu-latest
     needs: extract_version
     permissions:
