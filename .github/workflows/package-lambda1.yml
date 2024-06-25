@@ -1,3 +1,5 @@
+name: Package - Lambda 1
+
 on:
   pull_request:
     types: [closed]
@@ -11,29 +13,25 @@ env:
   IMAGE_NAME: ${{ github.repository }}
   CURRENT_HASH: ${{ github.sha }}
 
-name: Package - Lambda 1
 jobs:
   extract_version:
     if: github.event.pull_request.merged && startsWith(github.event.pull_request.head.ref, 'release-please--branches--main--components--')
     runs-on: ubuntu-latest
-    name: Extract Version
+    outputs:
+      package_version: ${{ steps.extract_version.outputs.version }}
     steps:
       - uses: actions/checkout@v3
       - name: Install jq
         run: sudo apt-get install jq
-      - name: Extract version from package.json and set as env variable
+      - name: Extract version from package.json and set as output
+        id: extract_version
         run: |
           VERSION=$(jq -r '.version' lambdas/lambda1/package.json)
-          echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
-      - name: Use version
-        run: echo "The extracted version is $PACKAGE_VERSION"
+          echo "::set-output name=version::$VERSION"
 
   publish_release:
-    runs-on: ubuntu-latest
     needs: extract_version
-    permissions:
-      contents: read
-      packages: write
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -56,7 +54,7 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:latest
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:${{ env.PACKAGE_VERSION }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:${{ needs.extract_version.outputs.package_version }}
           labels: ${{ steps.meta-secret-rotation.outputs.labels }}
           build-args: |
             GITHUB_PACKAGE_ACCESS_TOKEN=${{ secrets.GH_PACKAGE_ACCESS_TOKEN }}
