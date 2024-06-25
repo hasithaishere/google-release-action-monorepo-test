@@ -3,8 +3,8 @@ on:
     types: [closed]
     branches:
       - 'main'
-    # paths:
-    #   - 'lambdas/lambda1/**'
+    paths:
+      - 'lambdas/lambda1/CHANGELOG.md'
 
 env:
   REGISTRY: ghcr.io
@@ -13,50 +13,29 @@ env:
 
 name: Staging Release
 jobs:
-  test:
-    if: github.event.pull_request.merged == true
+  extract_version:
+    if: github.event.pull_request.merged && startsWith(github.event.pull_request.head.ref, 'release-please--branches--main--components--')
     runs-on: ubuntu-latest
+    name: Extract Version
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          registry-url: 'https://npm.pkg.github.com'
-      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
-      - run: cd lambdas/lambda1 && npm test
-
-  audit:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          registry-url: 'https://npm.pkg.github.com'
-      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
-      - run: cd lambdas/lambda1 && npm audit --omit=dev
-
-  create_release:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
-    steps:
-      - uses: google-github-actions/release-please-action@v4
-        id: release
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Print release outputs
+      - name: Read version from package.json
+        id: package_version
         run: |
-          echo "Release created: ${{ steps.release.outputs.release_created }}"
-          echo "Tag name: ${{ steps.release.outputs.tag_name }}"
+          JSON_STRING="$(cat lambdas/lambda1/package.json)"
+          echo "PACKAGE_JSON<<EOF" >> $GITHUB_ENV
+          echo "$JSON_STRING" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Set output from JSON
+        run: echo "::set-output name=version::$(echo '${{ fromJson(env.PACKAGE_JSON).version }}')"
+        id: json
+      - name: Print version
+        run: echo "Extracted version is ${{ steps.json.outputs.version }}"
 
   publish_release:
     if: github.event.pull_request.merged == true && needs.create_release.outputs.release_created == 'true'
     runs-on: ubuntu-latest
-    needs: create_release
+    needs: extract_version
     permissions:
       contents: read
       packages: write
