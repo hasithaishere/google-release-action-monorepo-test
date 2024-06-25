@@ -12,6 +12,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
   CURRENT_HASH: ${{ github.sha }}
+  LAMBDA_PATH: 'lambdas/lambda1'  # Define your lambda path here
 
 jobs:
   extract_version:
@@ -26,11 +27,35 @@ jobs:
       - name: Extract version from package.json and set as output
         id: extract_version
         run: |
-          VERSION=$(jq -r '.version' lambdas/lambda1/package.json)
+          VERSION=$(jq -r '.version' ${{ env.LAMBDA_PATH }}/package.json)
           echo "::set-output name=version::$VERSION"
 
+  test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+      - run: cd ${{ env.LAMBDA_PATH }} && npm ci --ignore-scripts
+      - run: cd ${{ env.LAMBDA_PATH }} && npm test
+
+  audit:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+      - run: cd ${{ env.LAMBDA_PATH }} && npm ci --ignore-scripts
+      - run: cd ${{ env.LAMBDA_PATH }} && npm audit --omit=dev
+
   publish_release:
-    needs: extract_version
+    needs: [extract_version, test, audit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -49,8 +74,8 @@ jobs:
       - name: Build and push Docker image (Secret Rotation Function)
         uses: docker/build-push-action@v5
         with:
-          context: ./lambdas/lambda1
-          file: ./lambdas/lambda1/Dockerfile
+          context: ./${{ env.LAMBDA_PATH }}
+          file: ./${{ env.LAMBDA_PATH }}/Dockerfile
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:latest
