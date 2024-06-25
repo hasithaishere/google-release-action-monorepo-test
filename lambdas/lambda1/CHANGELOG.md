@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.2.5...lambda1@v0.3.0) (2024-06-25)
+
+
+### Features
+
+* Update package-lambda1.yml workflow to extract version from package.json ([2ccebd7](https://github.com/hasithaishere/google-release-action-monorepo-test/commit/2ccebd75ea4f53785ee27c33740426361bbcc25e))
+
 ## [0.2.5](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.2.4...lambda1@v0.2.5) (2024-06-25)
 
 
