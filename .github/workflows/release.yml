@@ -50,8 +50,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Print release outputs
         run: |
-          echo "Release created: ${{ steps.release.outputs.release_created }}"
-          echo "Tag name: ${{ steps.release.outputs.tag_name }}"
+          echo "Release created: ${{ steps.release.outputs }}"
 
   publish_release:
     if: github.event.pull_request.merged == true && needs.create_release.outputs.release_created == 'true'
