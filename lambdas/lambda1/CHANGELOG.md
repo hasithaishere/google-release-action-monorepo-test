@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.2.3...lambda1@v0.2.4) (2024-06-25)
+
+
+### Bug Fixes
+
+* Update package-lambda1.yml workflow name to "Package - Lambda 1" ([df2945b](https://github.com/hasithaishere/google-release-action-monorepo-test/commit/df2945b4dd54c2eb7fa3a87e655023ffdf6bd998))
+
 ## [0.2.3](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.2.2...lambda1@v0.2.3) (2024-06-25)
 
 
