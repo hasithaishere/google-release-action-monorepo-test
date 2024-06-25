@@ -6,6 +6,9 @@
     "packages": {
       "lambdas/lambda1": {
         "package-name": "lambda1"
+      },
+      "lambdas/lambda2": {
+        "package-name": "lambda2"
       }
     }
   }
