@@ -19,13 +19,14 @@ jobs:
     name: Extract Version
     steps:
       - uses: actions/checkout@v3
-      - name: Extract version from package.json
-        id: package_version
+      - name: Install jq
+        run: sudo apt-get install jq
+      - name: Extract version from package.json and set as env variable
         run: |
           VERSION=$(jq -r '.version' lambdas/lambda1/package.json)
-          echo "::set-output name=version::$VERSION"
-      - name: Print version
-        run: echo "Extracted version is ${{ steps.package_version.outputs.version }}"
+          echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Use version
+        run: echo "The extracted version is $PACKAGE_VERSION"
 
   publish_release:
     runs-on: ubuntu-latest
@@ -55,7 +56,7 @@ jobs:
           push: true
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:latest
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:${{ env.CURRENT_HASH }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/test-lambda-1:${{ env.PACKAGE_VERSION }}
           labels: ${{ steps.meta-secret-rotation.outputs.labels }}
           build-args: |
             GITHUB_PACKAGE_ACCESS_TOKEN=${{ secrets.GH_PACKAGE_ACCESS_TOKEN }}
