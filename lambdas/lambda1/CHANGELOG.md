@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.3.1...lambda1@v0.4.0) (2024-06-25)
+
+
+### Features
+
+* Improve code logic in lambda1 ([b30f972](https://github.com/hasithaishere/google-release-action-monorepo-test/commit/b30f972b0da463b925c64a68d586ba6673f2576f))
+
 ## [0.3.1](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.3.0...lambda1@v0.3.1) (2024-06-25)
 
 
