@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.5.0...lambda1@v0.6.0) (2024-06-25)
+
+
+### Features
+
+* Update package-lambda1.yml to include LAMBDA_PATH and PACKAGE_NAME environment variables ([5f1324a](https://github.com/hasithaishere/google-release-action-monorepo-test/commit/5f1324a061661f755ca47492d3a5c9ce76dbf49a))
+
 ## [0.5.0](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.4.0...lambda1@v0.5.0) (2024-06-25)
 
 
