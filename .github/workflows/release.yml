@@ -17,33 +17,7 @@ jobs:
     if: github.event.pull_request.merged && !startsWith(github.event.pull_request.head.ref, 'release-please--branches--main--components--')
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This PR is not a release PR"
-
-  test:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    needs: is_runnable
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          registry-url: 'https://npm.pkg.github.com'
-      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
-      - run: cd lambdas/lambda1 && npm test
-
-  audit:
-    if: github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    needs: is_runnable
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          registry-url: 'https://npm.pkg.github.com'
-      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
-      - run: cd lambdas/lambda1 && npm audit --omit=dev
+      - run: echo "This PR is not a auto-generated release PR (From Google Release Please Action). Skipping the rest of the workflow."
 
   create_release:
     if: github.event.pull_request.merged == true

@@ -29,8 +29,34 @@ jobs:
           VERSION=$(jq -r '.version' lambdas/lambda1/package.json)
           echo "::set-output name=version::$VERSION"
 
+  test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: is_runnable
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
+      - run: cd lambdas/lambda1 && npm test
+
+  audit:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: is_runnable
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: 'https://npm.pkg.github.com'
+      - run: cd lambdas/lambda1 && npm ci --ignore-scripts
+      - run: cd lambdas/lambda1 && npm audit --omit=dev
+
   publish_release:
-    needs: extract_version
+    needs: [extract_version, test, audit]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
