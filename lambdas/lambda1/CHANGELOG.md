@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.2.2...lambda1@v0.2.3) (2024-06-25)
+
+
+### Bug Fixes
+
+* Update release workflow to include GitHub token ([7269cd7](https://github.com/hasithaishere/google-release-action-monorepo-test/commit/7269cd77eefbce2cda3cd5fd7e5590a3e682b221))
+
 ## [0.2.2](https://github.com/hasithaishere/google-release-action-monorepo-test/compare/lambda1@v0.2.1...lambda1@v0.2.2) (2024-06-25)
 
 
