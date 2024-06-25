@@ -3,8 +3,8 @@ on:
     types: [closed]
     branches:
       - 'main'
-    paths:
-      - 'lambdas/lambda1/**'
+    # paths:
+    #   - 'lambdas/lambda1/**'
 
 env:
   REGISTRY: ghcr.io
